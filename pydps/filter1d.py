@@ -6,6 +6,8 @@ or absence of a discontinuity
 from linalg import gemanPriorMatrix
 import torch
 import numpy as np
+from helper_functions import non_maxima_supression_
+from datasets.datasets import load_random_dataset
 
 class DpsFilter1D(object):
     """DPs Filter in one dimension, the filter scan each edge by solving a
@@ -41,7 +43,6 @@ class DpsFilter1D(object):
         
         #padding the signal
         padded = torch.from_numpy(np.pad(signal.numpy(),self.window,'edge'))
-        print("padded :",padded)
 
         #getting the signal size
         N = signal.shape[0] + self.window
@@ -72,25 +73,31 @@ class DpsFilter1D(object):
         sol = torch.potrs(b,self.A_decom,upper=False)
 
         #getting the imporant information
-        self.left  = sol[0,:-self.window]
-        self.right = sol[-1,self.window:]
+        left  = sol[0,:-self.window]
+        right = sol[-1,self.window:]
 
         #gradi
-        self.gradient  = torch.abs(right[1:]-left[:-1])
+        gradient  = torch.abs(right[1:]-left[:-1])
 
-        #process the gradient
-        line_process = self.activation(self.gradient)
+        #threshold
+        torch.threshold_(gradient,0.3,0)
+
+        #non maxima supression
+        line_process = non_maxima_supression_(gradient)
+
+        return line_process, gradient,(left,right)
     
-
-        
-        
     
 
 if __name__ == "__main__":
     fil  = DpsFilter1D(10,2)
-    sig = torch.tensor([0,0,0,0,0, 1,1,1,1,1])
-    print("initial sig:",sig)
-    fil(sig)
+
+    #loading a data set
+    data,target = load_random_dataset(5,200)
+
+    line_process, gradient,(left,right) = fil(data[0])
+    print(line_process)
+
 
 
 
