@@ -2,3 +2,4 @@ __pycache__/
 pydps/datasets/__pycache__
 notebooks/.ipynb_checkpoints
 pydps.egg-info/
+*.pyc
