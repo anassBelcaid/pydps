@@ -3,11 +3,11 @@ Dps Filter in one dimension. The filter scan each edge to decide the existence
 or absence of a discontinuity
 """
 
-from linalg import gemanPriorMatrix
+from pydps.linalg import gemanPriorMatrix
 import torch
 import numpy as np
-from helper_functions import non_maxima_supression_
-from datasets.datasets import load_random_dataset
+from pydps.helper_functions import non_maxima_supression_
+from pydps.datasets.datasets import load_random_dataset
 
 class DpsFilter1D(object):
     """DPs Filter in one dimension, the filter scan each edge by solving a

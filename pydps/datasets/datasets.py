@@ -5,8 +5,8 @@ from pydps.datasets.signals import random
 import torch
 from torch.distributions.normal import Normal
 import numpy as np
-import matplotlib.pyplot as plt
 
+from pydps.vis import plot_dataset
 
 def load_random_dataset(batch_size,signal_size,noise_scale=0.1):
     """
@@ -36,41 +36,6 @@ def load_random_dataset(batch_size,signal_size,noise_scale=0.1):
 
 
 
-def plot_dataset(data,targets, indices=None):
-    """
-    plot a set of examples indexec by indices from the  dataset
-    """
-
-    #prior processing of indices
-
-    if(indices is None):
-        indices = np.arange(len(data))
-    print(indices)
-
-    #number  of lines for the subplot
-    N = len(indices)
-    num_lin =  int(np.sqrt(N))
-    num_col = N // num_lin+1
-
-    fig, axs = plt.subplots(num_lin,num_col,sharex =True,figsize=(12,8))
-
-
-    if(num_col==1): 
-        for index in range(N):
-            k = indices[index]
-            axs[index//num_col].plot(data[k].numpy())
-            axs[index//num_col].plot(targets[k].numpy())
-    
-
-    else:
-        for index in range(N):
-            k = indices[index]
-            ax = axs[index//num_col, index%num_col]
-            ax.plot(data[k].numpy())
-            ax.plot(targets[k].numpy())
-            # ax.set_title('Example %d'%k)
-
-    plt.show()
 
 if __name__ == "__main__":
     
