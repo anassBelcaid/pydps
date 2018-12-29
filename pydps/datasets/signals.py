@@ -1,40 +1,32 @@
 import numpy as np
 import torch as tc
 
-def random(size,num_dis,geom_prob=0.05,min_dist=20,min_jump=0.2):
+def random(size,num_dis,min_jump=0.3):
     """Generate a random signal of signal size, discontinuities positions
     follows a geom probability
 
     :size:  size of the signal
     :num_dis: number of discontinuities
-    :geom_prob: geometric law parameter (\lambda)
-    : min_dist: minimal distance between Two jumps
-    :min_jump:  minimal jump for each discontinuit
+    :min_jump: minimu jump
     :returns: torch tensor containing the 
     """
-    dis = [] 
-    jumps = 2*np.random.rand(num_dis)-1
 
-    k=0       # protec with max iteration
-    rem = size          # remaining size
+    # array of the discontinuities
+    dis = sorted(np.random.choice(range(1,size),num_dis,replace=False))
+    # TODO : Should add min jumps to avoid 
+    jumps = min_jump + np.random.rand(num_dis)
 
-    while(len(dis)<num_dis and k <1000):
-        #generating a poisson trial
-        l = np.random.geometric(geom_prob)
 
-        if(l>min_dist and l<rem):
-            if(len(dis)==0):
-                dis.append(l)
-            else:
-                dis.append(l+dis[-1])
-            rem -= l
-        k +=1
+    #flipping given jumps
+    mask = np.random.choice([True,False],num_dis,replace=True)
+    jumps[mask] = -jumps[mask]
 
-    assert(len(dis) == num_dis), " Probability too low"
+    return _discriteSignal(size,dis,jumps)
 
-    
 
-    return  _discriteSignal(size,dis,jumps)
+
+
+
 
 
 def _discriteSignal(size,dis,jumps,initial_value=0):
@@ -66,3 +58,10 @@ def _discriteSignal(size,dis,jumps,initial_value=0):
     return signal
 
 
+
+if __name__ == "__main__":
+
+    X = random(100,5)
+
+    print(X)
+    
