@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
+from sklearn.metrics import accuracy_score
+
 def plot_dataset(data,targets, indices=None):
     """
     plot a set of examples indexec by indices from the  dataset
@@ -41,9 +43,6 @@ def plot_dataset(data,targets, indices=None):
 
     plt.show()
 
-def precision(gt,edge):
-
-    return (gt==edge).numpy().mean()
 
 def plot_edge_detection1d(noised,edge,gt=None,gradient=None):
     """Plot the result of the edge detection 
@@ -71,4 +70,7 @@ def plot_edge_detection1d(noised,edge,gt=None,gradient=None):
         gt_line  = gt[1:]- gt[0:-1]
         gt_line[gt_line !=0]= 1
         ax[1].stem(gt_line,label='ground truth')
-        ax[1].set_title('prec= %.2f'%precision(gt_line,edge))
+        accuracy = accuracy_score(gt_line.numpy(),edge.numpy())
+        ax[1].set_title('accuracy= %.2f'%accuracy)
+
+    plt.show()
