@@ -10,6 +10,7 @@ from pydps.helper_functions import non_maxima_supression_
 from pydps.datasets.datasets import load_random_dataset
 from sklearn.metrics import precision_score,recall_score,f1_score
 from time import time
+import matplotlib.pyplot as plt
 
 
 #supperted devices
@@ -37,7 +38,8 @@ class DpsFilter1D(object):
         
         #computing the decomposition on a one Geman matrix
 
-        self.A_decom = gemanPriorMatrix(lam,window+1,factorized=True)
+        self.A_decom = gemanPriorMatrix(lam,window+1,factorized=False)
+        self.A_decom = torch.inverse(self.A_decom)
 
     def _second_member(self,signal):
         """
@@ -83,13 +85,15 @@ class DpsFilter1D(object):
         #solving the each position
         if(device=='cpu'):
             t=time()
-            sol = torch.potrs(b,self.A_decom,upper=False)
+            # sol = torch.potrs(b,self.A_decom,upper=False)
+            sol = torch.mm(self.A_decom,b)
             self.time=time()-t
         else:
             b= b.to('cuda')
             A_decom = self.A_decom.to('cuda')
             t=time()
-            sol = torch.Tensor.potrs(b,A_decom,upper=False)
+            # sol = torch.Tensor.potrs(b,A_decom,upper=False)
+            sol = torch.mm(A_decom,b)
             self.time=time()-t
 
         #converting to memory in case of gpu
@@ -110,9 +114,8 @@ class DpsFilter1D(object):
         self.line_process = non_maxima_supression_(self.gradient)
 
 
-        print("filtering took %.2e second"%self.time)
 
-        return self.line_process, self.gradient,(self.left,self.right)
+        return self.line_process,self.gradient,(self.left,self.right)
 
     def statistics_(self, gt):
         """Function to get the classification statistics from the ground truth
@@ -139,27 +142,50 @@ class DpsFilter1D(object):
 
 
         return self.statistics
-    
+
+    def score(self, dataset,target, device='cpu'):
+        """ Compute the score and a set of statistics for recovering a dataset
+
+        :dataset: 2-D tensor (N batch size, signal size)
+        :returns:  return the mean f score and a dictionnary for the results of
+        the expericnes
+        """
+
+        statistics  ={'precision':[],'recall':[],'fscore':[],'time':[]}
+
+        N,S = dataset.shape
+
+        for i in range(N):
+            self.__call__(dataset[i],device=device)
+            #getting the expersionce result
+            St = self.statistics_(target[i]) 
+
+            statistics['precision'].append(St['precision'])
+            statistics['recall'].append(St['recall'])
+            statistics['fscore'].append(St['fscore'])
+            statistics['time'].append(self.time)
+
+
+        return np.array(statistics['fscore']).mean(), statistics
     
 
 if __name__ == "__main__":
-    fil  = DpsFilter1D(200,0.25,200)
-    device = 'cpu'
+
+    fil  = DpsFilter1D(30,0.2,8)
+    device = 'cuda'
     print("using device %s"%device)
 
     #loading a data set
-    data,target = load_random_dataset(10,10000)
-
-    for i in range(5):
-        
-        #filtering  
-        line_process, gradient,(left,right) = fil(data[i],device=device)
+    data,target = load_random_dataset(200,400,0.1)
 
 
-        #computing the statistics
-        stats = fil.statistics_(target[i])
-        print(stats)
+    #applying the filter on the dataset
 
+    fscore, Statistics = fil.score(data,target,device=device)
+    print("mean F score is %.2f"%fscore)
+
+    plt.loglog(Statistics['fscore'])
+    plt.show()
 
 
 
