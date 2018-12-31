@@ -7,6 +7,7 @@ author =  "A.Belcaid",
 licence ='MTI',
 packages  = ["pydps"],
 # install_requires = ["packages"]
-zip_safe = False
+zip_safe = False,
+include_package_data=True
 )
 

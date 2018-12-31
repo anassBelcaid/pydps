@@ -36,12 +36,9 @@ if __name__ == "__main__":
     device = args.device
 
     if args.verbosity:
-        print("using device %s"%device)
-        print("batch size= %d"%args.batchsize)
-        print("signal size= %s"%args.sigsize)
-        print("filter smoothness= %d"%args.lamda)
-        print("filter sensibility= %.2f"%args.sensitivity)
-        print("filter window =%d"%args.window)
+        #printing all the arguments
+        for arg in vars(args):
+            print(arg," is =",getattr(args,arg))  
 
     #loading a data set
     data,target = load_random_dataset(args.batchsize,args.sigsize,0.1)
