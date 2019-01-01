@@ -7,6 +7,7 @@ from pydps.datasets.datasets import load_top_hat
 import torch
 import matplotlib.pyplot as plt
 from pydps.filter1d import DpsFilter1D
+from pydps.reconstruction import reconstruct_mean_from_edge1d
 
 
 if __name__ == "__main__":
@@ -18,11 +19,11 @@ if __name__ == "__main__":
     filt = DpsFilter1D(40, 0.8,8)
 
     line,grad,(left,right) = filt(data)
+
+    recoverd = reconstruct_mean_from_edge1d(data,line)
     
     plt.plot(target.numpy())
-    plt.plot(data.numpy(),alpha=0.1,lw=0.5)
-    plt.plot(grad.numpy(),label='grad')
-    plt.plot(line.numpy(),label='line')
-    plt.axhline(y=0.6,xmin=0,xmax=128)
+    plt.plot(data.numpy(),alpha=0.6,lw=0.5)
+    plt.plot(recoverd.numpy())
     plt.legend()
     plt.show()
