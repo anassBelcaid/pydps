@@ -6,7 +6,8 @@ or absence of a discontinuity
 from pydps.linalg import gemanPriorMatrix
 import torch
 import numpy as np
-from pydps.helper_functions import non_maxima_supression_
+# from pydps.helper_functions import non_maxima_supression_
+from pydps.helper_functions import priorityQueueWithMinimalDistance
 from pydps.datasets.datasets import load_random_dataset
 from sklearn.metrics import precision_score,recall_score,f1_score
 from time import time
@@ -53,7 +54,7 @@ class DpsFilter1D(object):
         """
         
         #padding the signal
-        padded = torch.from_numpy(np.pad(signal.numpy(),self.window,'edge'))
+        padded = torch.from_numpy(np.pad(signal.numpy(),self.window,'reflect'))
 
         #getting the signal size
         N = signal.shape[0] + self.window
@@ -111,7 +112,10 @@ class DpsFilter1D(object):
         torch.threshold_(self.gradient,self.sensitivity,0)
 
         #non maxima supression
-        self.line_process = non_maxima_supression_(self.gradient)
+        # self.line_process = non_maxima_supression_(self.gradient)
+        self.line_process = priorityQueueWithMinimalDistance(self.gradient,\
+                int(self.lam/2))
+
 
 
 

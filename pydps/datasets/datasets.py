@@ -8,6 +8,7 @@ import numpy as np
 import pydps.datasets
 from os.path import abspath,dirname
 from pydps.vis import plot_dataset
+import matplotlib.pyplot as plt
 
 
 #root folder to access file
@@ -57,11 +58,33 @@ def load_molecular_motor(signal_size=1000):
 
 
 
+def load_top_hat(signal_size=1000,sigma=0.2):
+    """Load the top hat data presented in A.Blake and A.Zisserman book
+    Visual Reconstruction 
+
+    :signal_size:  signal size
+    : sigma: noise standard variation
+    :return:  data, target as tensors
+    """
+
+    #limits of the ones
+    third,third2 = int(signal_size/3), int(2*signal_size/3)
+
+    target = torch.zeros(signal_size)
+    target[third:third2] = 1
+
+    data =sigma*torch.randn(signal_size)+target
+
+    return data, target
+    
+
+
+
+   
+
 
 if __name__ == "__main__":
+
+    data, target = load_top_hat(200)
     
-    # X,y = load_random_dataset(10,200)
-    X,y = load_molecular_motor(100)
-    # plot_dataset(X,y,indices = [0,1,4,6,3,8])
-    # plot_dataset(X,y)
 
