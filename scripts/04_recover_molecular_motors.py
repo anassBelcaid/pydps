@@ -12,7 +12,9 @@ import matplotlib.pyplot as plt
 import argparse
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import classification_report 
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+from matplotlib2tikz import get_tikz_code
 
 #default argument parser
 parser = argparse.ArgumentParser()
@@ -48,7 +50,7 @@ if __name__ == "__main__":
 
     #printing the classification report
     gt_edge = target[1:]!=target[:-1]
-    print(classification_report(gt_edge.numpy(),edge.numpy()))
+    print(confusion_matrix(gt_edge.numpy(),edge.numpy(),labels=[0,1]))
     acc = accuracy_score(gt_edge.numpy(),edge.numpy())
 
     #plotting
@@ -58,4 +60,8 @@ if __name__ == "__main__":
     plt.title('Reconstruction with Dps Filter, err=%.2e,\
             f1=%.3f'%(error,acc))
     plt.legend()
-    plt.show()
+
+    #generating the code
+    get_tikz_code("./molecular.tikz",figurewidth='\\figurewidht',\
+            figureheight='\\figureheight')
+    # plt.show()

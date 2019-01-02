@@ -186,7 +186,9 @@ if __name__ == "__main__":
     #applying the filter on the dataset
 
     fscore, Statistics = fil.score(data,target,device=device)
+    mean_time = np.mean(Statistics['time'])
     print("mean F score is %.2f"%fscore)
+    print("mean time is %.2e"%mean_time)
 
     plt.loglog(Statistics['fscore'])
     plt.show()
