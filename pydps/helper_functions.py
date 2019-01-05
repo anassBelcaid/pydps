@@ -101,7 +101,7 @@ def save_csv_table(filename, data, labels,X=None):
 
 
     #remaining vectors
-    for i in range(1,m):
+    for i in range(1,m+1):
         table[:,i]=data[i-1]
 
 
