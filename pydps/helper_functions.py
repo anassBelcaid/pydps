@@ -78,6 +78,39 @@ def priorityQueueWithMinimalDistance(signal,min_dist):
     return line_process
 
 
+def save_csv_table(filename, data, labels,X=None):
+    """Helper function to save a csv table for pgfplots
+
+    :filename : path of the file name
+    :data: Tuple of columns vectors with the same size
+    :labels: labels of each column for the header
+    :X:  X axis vectors if none (range(n)) is taken instead
+    """
+
+    #number of vectors in data
+    m = len(data)
+    
+    #number of entries
+    n = len(data[0])
+
+    #creating the table
+    table = np.zeros((n,m+1))
+
+    #X vector
+    table[:,0]=X if(X  is not None) else  np.arange(n)
+
+
+    #remaining vectors
+    for i in range(1,m):
+        table[:,i]=data[i-1]
+
+
+    #saving the file
+    np.savetxt(filename,table,delimiter=',', header =labels,comments="")
+
+
+    
+
 
 
 
