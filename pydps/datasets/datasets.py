@@ -76,15 +76,41 @@ def load_top_hat(signal_size=1000,sigma=0.2):
     data =sigma*torch.randn(signal_size)+target
 
     return data, target
-    
+
+def load_potts_example(signal_size=1000, sigma=0.2,):
+    """
+    Load the signal presented in the variational potts model
+
+    :signal_size: size of the signal
+    :sigma:  standard deviation of the signal
+
+    :return: data, target as tensors
+    """
+
+    # initial signal
+    X = np.linspace(-1, 1, signal_size)
+    y = np.zeros_like(X)
+
+    for (i,x) in enumerate(X):
+        if(x>-0.3):
+            if((0.1 < x) & ( x < 0.4)):
+                y[i]+=2;
+            if(x<-0.1):
+                y[i]+=1
 
 
+    nois = y + np.random.normal(scale=sigma,size=y.shape)
 
-   
-
+    return torch.from_numpy(nois)\
+            ,torch.from_numpy(y)
 
 if __name__ == "__main__":
 
-    data, target = load_top_hat(200)
+    # data, target = load_top_hat(200)
+    data, target  = load_potts_example(200)
+    plt.plot(data.numpy())
+    plt.plot(target.numpy())
+    plt.show()
+
     
 
