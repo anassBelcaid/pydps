@@ -47,7 +47,9 @@ class Neuroblastoma(object):
         self.num_patients = self.profiles['profile.id'].max()
 
 
+    def __len__(self):
 
+        return self.num_patients
     
     
     def patient_sample(self, index):
@@ -115,7 +117,7 @@ class Neuroblastoma(object):
 
         return chrom_dict
 
-    def plot_patient_data(self, index):
+    def plot_patient_data(self, index,ax):
         """plot the annotated data for a patient
 
         :index: index of the patient
@@ -134,7 +136,6 @@ class Neuroblastoma(object):
 
         
         #plotting the data
-        fig,ax = plt.subplots(1,1)
         ax.plot(signal)
 
 
@@ -148,7 +149,7 @@ class Neuroblastoma(object):
             sig,annot = data[chrom]
 
             #Creating the rectangle
-            rect=Rectangle((x,-2),dimensions[i],3)
+            rect=Rectangle((x,-2),dimensions[i],5)
             x +=dimensions[i]
             ax.vlines(x,ymin,ymax,lw=4)
 
@@ -170,9 +171,6 @@ class Neuroblastoma(object):
         #adding the collection
         ax.add_collection(break_collection)
         ax.add_collection(normal_collection)
-        plt.show()
-
-
 
 
 
@@ -180,7 +178,9 @@ class Neuroblastoma(object):
 
 if __name__ == "__main__":
     Data = Neuroblastoma()
-    Data.plot_patient_data(1)
+    fig,ax = plt.subplots(1,1)
+    Data.plot_patient_data(13,ax)
+    plt.show()
 
         
 
