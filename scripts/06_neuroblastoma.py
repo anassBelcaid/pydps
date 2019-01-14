@@ -9,6 +9,7 @@ from pydps.datasets.neuroblastoma import Neuroblastoma
 import argparse
 import torch
 from sklearn.metrics import auc,confusion_matrix,f1_score
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_curve
 
 
@@ -18,9 +19,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-w", "--window", default=30, \
         help="window  of the filter",type=int)
 
-parser.add_argument("-l", "--lamda", default=100, \
+parser.add_argument("-l", "--lamda", default=20, \
         help="Smoothness power",type=int)
-parser.add_argument("-H", "--sensitivity", default=0.4, \
+parser.add_argument("-H", "--sensitivity", default=0.19, \
         help="sensibility of the filter",type=float)
 
 parser.add_argument("-s", "--simSize",default=20,\
@@ -40,7 +41,6 @@ if __name__ == "__main__":
     finding = []
     choices = np.random.choice(range(1,len(data)),args.simSize,replace=False)
     for index in choices:
-        print("recovering patient i=%3d"%index)
         #trying one example
         patient = data.patient_sample(index)
 
@@ -72,8 +72,9 @@ if __name__ == "__main__":
     y_pred = finding[:,1]
 
     #printing the statistics
-    print("f1 score is %.2f"%f1_score(y_true,y_pred))
+    print("f1 score is %.2f"%f1_score(y_true,y_pred,pos_label=1))
     print("confusions matrix: \n ",confusion_matrix(y_true,y_pred))
+    print("accuray score is %.2f"%accuracy_score(y_true,y_pred))
 
     #auc   getting the false positive and true  positive rates
     fpr, tpr, thresholds  = roc_curve(y_true,y_pred,pos_label=1)
