@@ -52,10 +52,11 @@ class Neuroblastoma(object):
         return self.num_patients
     
     
-    def patient_sample(self, index):
+    def patient_sample(self, index,allAnnotations=False):
         """get the the annotated crhomosome samples for a patient
 
         :index:  Index for the patient
+        :allAnnotations: keep all chromosome even those without annotations
         :returns: TODO
 
         """
@@ -78,7 +79,8 @@ class Neuroblastoma(object):
             patient.loc[chromosome==str(chrom),'annotation']= val
 
         #dropping empty values
-        patient=patient[patient.annotation!='empty']
+        if(not allAnnotations):
+            patient=patient[patient.annotation!='empty']
         
         #sorting the dataset
         patient.sort_values(['chromosome','position'])
@@ -117,26 +119,39 @@ class Neuroblastoma(object):
 
         return chrom_dict
 
-    def plot_patient_data(self, index,ax):
+    def plot_patient_data(self, index,ax,allAnnotations=False,legend=False):
         """plot the annotated data for a patient
 
         :index: index of the patient
         :returns: plot the data
 
         """
-        data = self.patient_sample(index)
+        data = self.patient_sample(index,allAnnotations)
 
         #dim of each chromsome
-        dimensions = [len(data[v][0]) for v in data]
+        chroms = ['1','2','3','4','5','6','7','8'\
+                ,'9','10','11','12','13','14','15'\
+                ,'16','17','18','19','20','21','22','X','Y']
+        # print(data.keys())
+        dimensions = [len(data[v][0]) for v in chroms]
+        print("dimensions are:",dimensions)
 
         #joining the array by chromosome
-        signal = np.hstack((data[v][0] for v in data))
+        signal = np.hstack((data[v][0] for v in chroms))
+        indexed_data = np.zeros((len(signal),2))
+        indexed_data[:,0], indexed_data[:,1] = np.arange(len(signal)),signal
+
+        np.savetxt("patient"+str(index)+".csv",\
+                indexed_data[::3,:],header="pos,log",comments="",\
+                delimiter=',')
         ymin,ymax= np.min(signal),np.max(signal)
 
 
         
         #plotting the data
-        ax.plot(signal)
+        ax.plot(signal,lw=0.8,alpha=0.5,color='C1')
+        ax.set_xticks([])
+        ax.set_xlabel('Chromosome')
 
 
         #rectangles
@@ -144,33 +159,43 @@ class Neuroblastoma(object):
         break_collection  = []
 
         x = 0
+        #chromosome label dictionnary
+        bbox=dict(facecolor='C3', alpha=0.5)
 
-        for (i,chrom) in enumerate(data): 
+        for (i,chrom) in enumerate(chroms): 
             sig,annot = data[chrom]
 
             #Creating the rectangle
             rect=Rectangle((x,-2),dimensions[i],5)
             x +=dimensions[i]
-            ax.vlines(x,ymin,ymax,lw=4)
+            ax.vlines(x,ymin,ymax,lw=2)
+            if(legend):
+                ax.text(x-dimensions[i]//2,ymax,str(chrom),fontsize=16,bbox=bbox)
+
 
 
             #adding the rectangle
             if(annot=='normal'):
                 normal_collection.append(rect)
+            elif(annot=='empty'):
+                pass
             else:
                 break_collection.append(rect)
 
         #patching the normal collection 
         normal_collection = PatchCollection(normal_collection,facecolor='green'\
-                    ,alpha=0.2)
+                    ,alpha=0.3,label='C5')
 
         #patching the break 
-        break_collection = PatchCollection(break_collection,facecolor='red'\
-                    ,alpha=0.2)
+        break_collection = PatchCollection(break_collection,facecolor='C0'\
+                    ,alpha=0.3)
 
         #adding the collection
         ax.add_collection(break_collection)
         ax.add_collection(normal_collection)
+
+        #setting the collections
+
 
 
 
