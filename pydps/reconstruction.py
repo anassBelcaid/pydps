@@ -86,7 +86,9 @@ def _reconstruct_geman(signal,lam):
     A =gemanPriorMatrix(lam,len(signal),factorized=True)
     
 
-    return torch.potrs(signal,A.float(),upper=False)
+    
+    # return torch.potrs(signal,A.float(),upper=False)
+    return torch.cholesky_solve(signal[:,None],A.float(),upper=False)
     
 
 def reconstruct_geman_from_edge1d(signal,edge,lam):
