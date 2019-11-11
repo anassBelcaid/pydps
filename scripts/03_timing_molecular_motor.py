@@ -17,11 +17,11 @@ import torch
 #default parser
 parser = argparse.ArgumentParser()
 parser.add_argument("-l", "--lamda", default=20, help="smoothnes"\
-        ,type=int)
-parser.add_argument("-H","--sensitivity", default=0.2,type=float,\
+        , type=int)
+parser.add_argument("-H", "--sensitivity", default=0.2, type=float,\
         help='Sensisitivy of the filter')
 parser.add_argument("-w", "--window", default=10, help="filter window"\
-        ,type=int)
+        , type=int)
 parser.add_argument("-v", "--verbosity", action="store_true", default=False,\
         help="verbositiy")
 parser.add_argument("-p", "--param", default='size', help="pamester of\
@@ -40,7 +40,6 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
 
-
     if args.verbosity:
         for arg in vars(args):
             print(arg,"= ", getattr(args,arg))
@@ -52,11 +51,11 @@ if __name__ == "__main__":
         X.squeeze_(), y.squeeze_()
 
         #windows values
-        windows = torch.linspace(args.winMin,args.winMax,args.simSize).int()
+        windows = torch.linspace(args.winMin, args.winMax, args.simSize).int()
 
         
         #simulation data
-        data = np.zeros((args.simSize,2))
+        data = np.zeros((args.simSize, 2))
         data[:,0]  = windows.numpy()
 
         for (i,w) in enumerate(windows.numpy()):
@@ -64,7 +63,7 @@ if __name__ == "__main__":
             if(args.verbosity and i%10):
                 print("w = %d"%w)
             #Filter 
-            filt = DpsFilter1D(args.lamda,args.sensitivity,w)
+            filt = DpsFilter1D(args.lamda, args.sensitivity,w)
 
             #calling the filter
             line,grad,(left,right)= filt(X,device=args.device)
@@ -74,7 +73,7 @@ if __name__ == "__main__":
             #poly fit
 
     
-        C = np.polyfit(np.log(data[:,0]),np.log(data[:,1]),1)
+        C = np.polyfit(np.log(data[:,0]), np.log(data[:,1]), 1)
         print('C=',C)
 
         plt.loglog(data[1:,0],data[1:,1])

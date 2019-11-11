@@ -9,13 +9,13 @@ import numpy as np
 # from pydps.helper_functions import non_maxima_supression_
 from pydps.helper_functions import priorityQueueWithMinimalDistance
 from pydps.datasets.datasets import load_random_dataset
-from sklearn.metrics import precision_score,recall_score,f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score
 from time import time
 import matplotlib.pyplot as plt
 
 
 #supperted devices
-supported_devices = ['cpu','cuda']
+supported_devices = ['cpu', 'cuda']
 
 class DpsFilter1D(object):
 
@@ -41,7 +41,6 @@ class DpsFilter1D(object):
 
         self.A_decom = gemanPriorMatrix(lam,window+1,factorized=False)
         self.A_decom = torch.inverse(self.A_decom)
-
     def _second_member(self,signal):
         """
         function to create the second member for each edge
@@ -68,9 +67,6 @@ class DpsFilter1D(object):
             b[:,i] = padded[i:i+part_size]
 
         return b
-
-        
-    
     def __call__(self, signal,device='cpu'):
         """Method to filter a signal an return the line process
 
@@ -120,7 +116,6 @@ class DpsFilter1D(object):
 
 
         return self.line_process,self.gradient,(self.left,self.right)
-
     def statistics_(self, gt):
         """Function to get the classification statistics from the ground truth
 
@@ -146,8 +141,7 @@ class DpsFilter1D(object):
 
 
         return self.statistics
-
-    def score(self, dataset,target, device='cpu'):
+def score(self, dataset,target, device='cpu'):
         """ Compute the score and a set of statistics for recovering a dataset
 
         :dataset: 2-D tensor (N batch size, signal size)
@@ -171,8 +165,6 @@ class DpsFilter1D(object):
 
 
         return np.array(statistics['fscore']).mean(), statistics
-    
-
 if __name__ == "__main__":
 
     fil  = DpsFilter1D(30,0.2,8)
