@@ -40,7 +40,6 @@ def load_random_dataset(batch_size,signal_size,noise_scale=0.1):
 
     return data, targets
 
-
 def load_molecular_motor(signal_size=1000):
     """load the molecular motor data presented in the article 
     An Energy Based Scheme for Reconstruction of Piecewise\
@@ -54,9 +53,6 @@ def load_molecular_motor(signal_size=1000):
     target = np.loadtxt(root_fol+"/molecular_motors.mm",skiprows=2)[:signal_size]
 
     return torch.tensor(data[np.newaxis,:]), torch.tensor(target[np.newaxis,:])
-
-
-
 
 def load_top_hat(signal_size=1000,sigma=0.2):
     """Load the top hat data presented in A.Blake and A.Zisserman book

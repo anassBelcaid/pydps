@@ -45,13 +45,9 @@ class Neuroblastoma(object):
                 ,index_col='index')
 
         self.num_patients = self.profiles['profile.id'].max()
-
-
     def __len__(self):
 
         return self.num_patients
-    
-    
     def patient_sample(self, index,allAnnotations=False):
         """get the the annotated crhomosome samples for a patient
 
@@ -89,9 +85,9 @@ class Neuroblastoma(object):
         patient=patient[['chromosome','logratio','annotation']]
 
         return self._chromosomeSplit(patient.values)
-
     def _chromosomeSplit(self, array):
-        """Split the data numpy array on the chromosome values
+        """
+        Split the data numpy array on the chromosome values
 
         :array:  numpy array containting the annotation values on each
         chromosome
@@ -118,8 +114,7 @@ class Neuroblastoma(object):
             
 
         return chrom_dict
-
-    def plot_patient_data(self, index,ax,allAnnotations=False,legend=False):
+    def plot_patient_data(self, index,ax,allAnnotations=True,legend=False):
         """plot the annotated data for a patient
 
         :index: index of the patient
@@ -129,12 +124,12 @@ class Neuroblastoma(object):
         data = self.patient_sample(index,allAnnotations)
 
         #dim of each chromsome
-        chroms = ['1','2','3','4','5','6','7','8'\
-                ,'9','10','11','12','13','14','15'\
+        chroms = ['1','2','3','4','5','6','7','8','9'\
+                ,'10','11','12','13','14','15'\
                 ,'16','17','18','19','20','21','22','X','Y']
         # print(data.keys())
-        dimensions = [len(data[v][0]) for v in chroms]
-        print("dimensions are:",dimensions)
+        dimensions = [len(data[v][0]) for v in chroms if v in data.keys()]
+
 
         #joining the array by chromosome
         signal = np.hstack((data[v][0] for v in chroms))
@@ -197,14 +192,10 @@ class Neuroblastoma(object):
         #setting the collections
 
 
-
-
-
-
 if __name__ == "__main__":
     Data = Neuroblastoma()
     fig,ax = plt.subplots(1,1)
-    Data.plot_patient_data(13,ax)
+    Data.plot_patient_data(11,ax)
     plt.show()
 
         
