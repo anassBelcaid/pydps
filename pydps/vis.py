@@ -61,7 +61,7 @@ def plot_edge_detection1d(noised,edge,gt=None,gradient=None):
         ax[0].plot(gt.numpy(),lw=2)
 
     #second plot
-    ax[1].stem(edge)
+    ax[1].stem(edge, use_line_collection = True)
     if(gradient is not None):
         ax[2].plot(gradient.numpy())
         ax[2].set_title('gradient')
@@ -69,7 +69,7 @@ def plot_edge_detection1d(noised,edge,gt=None,gradient=None):
     if(gt is not None):
         gt_line  = gt[1:]- gt[0:-1]
         gt_line[gt_line !=0]= 1
-        ax[1].stem(gt_line,label='ground truth')
+        ax[1].stem(gt_line, label='ground truth', use_line_collection = True)
         accuracy = accuracy_score(gt_line.numpy(),edge.numpy())
         ax[1].set_title('accuracy= %.2f'%accuracy)
 

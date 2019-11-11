@@ -19,27 +19,26 @@ def load_random_dataset(batch_size,signal_size,noise_scale=0.1):
     Function to create a random piecewise constant signals 
     """
 
-    targets = torch.zeros((batch_size,signal_size))
+    targets = torch.zeros((batch_size , signal_size))
 
     #nois generator
-    nois_gen = Normal(0,noise_scale)
+    nois_gen = Normal(0 , noise_scale)
 
     #data
-    noise = nois_gen.sample((batch_size,signal_size))
+    noise = nois_gen.sample( (batch_size , signal_size) )
 
 
     #number of discontinuities for each size
-    num_dis  = np.random.choice(np.arange(2,10),batch_size,replace=True)
+    num_dis  = np.random.choice(np.arange(2,10) , batch_size,replace=True)
 
     for i in  range(batch_size):
-        targets[i] = random(signal_size,num_dis=num_dis[i])
+        targets[i] = random(signal_size , num_dis=num_dis[i])
     
     data = targets + noise
 
 
 
     return data, targets
-
 
 def load_molecular_motor(signal_size=1000):
     """load the molecular motor data presented in the article 
@@ -54,9 +53,6 @@ def load_molecular_motor(signal_size=1000):
     target = np.loadtxt(root_fol+"/molecular_motors.mm",skiprows=2)[:signal_size]
 
     return torch.tensor(data[np.newaxis,:]), torch.tensor(target[np.newaxis,:])
-
-
-
 
 def load_top_hat(signal_size=1000,sigma=0.2):
     """Load the top hat data presented in A.Blake and A.Zisserman book
